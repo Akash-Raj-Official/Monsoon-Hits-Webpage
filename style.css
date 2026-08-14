@@ -207,8 +207,8 @@ html, body {
   bottom: 0;
   background: radial-gradient(
     130px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
     transparent 80%
   );
   opacity: var(--mouse-opacity, 0);
