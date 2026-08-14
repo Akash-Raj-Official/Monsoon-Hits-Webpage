@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monsoon Hits | Deluxe Lounge & Rain Beats</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Rain Drop Canvas & Full Screen Background -->
+  <canvas id="rain-canvas"></canvas>
+  <div class="bg-overlay"></div>
+  <div class="bg-image" style="background-image: url('Monsoon hits.png');"></div>
+
+  <!-- Top Navigation Header -->
+  <header class="top-header">
+    <div class="header-left">
+      <div id="system-time" class="system-time">2:07 pm</div>
+    </div>
+
+    <div class="header-center">
+      <div class="online-badge">
+        <span class="pulse-dot"></span>
+        <span>Monsoon Hits Special</span>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <a href="https://music.youtube.com/playlist?list=OLAK5uy_nrsol77KIGNjXoQrCTMw0tU1E2FjTeZ4I" target="_blank" rel="noopener noreferrer" id="yt-music-link" class="pill-btn yt-btn">
+        <i class="fa-brands fa-youtube"></i>
+        <span>YT Music</span>
+        <i class="fa-solid fa-arrow-up-right-from-square arrow-icon"></i>
+      </a>
+    </div>
+  </header>
+
+  <!-- Playlist Modal / Drawer -->
+  <div class="playlist-drawer" id="playlist-drawer">
+    <div class="playlist-header">
+      <h3><i class="fa-solid fa-cloud-showers-heavy"></i> Monsoon Playlist</h3>
+      <button class="close-drawer" id="close-drawer-btn"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <ul class="playlist-items" id="playlist-items">
+      <!-- Generated via JS -->
+    </ul>
+  </div>
+  <div class="drawer-overlay" id="drawer-overlay"></div>
+
+  <!-- Main Floating Miniplayer -->
+  <main class="player-wrapper">
+    <div class="miniplayer">
+      <!-- Left: Revolving Disc -->
+      <div class="disc-section">
+        <div class="vinyl-disc" id="vinyl-disc">
+          <div class="vinyl-groove-ring"></div>
+          <div class="disc-art" id="disc-art" style="background-image: url('playlist.jpg');">
+            <div class="center-hole"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Track Info & Timeline -->
+      <div class="info-section">
+        <div class="track-meta">
+          <h2 class="song-title" id="song-title">Baarish</h2>
+          <p class="artist-name" id="artist-name">Ash King & Shashaa Tirupati</p>
+        </div>
+
+        <div class="timeline-section">
+          <div class="progress-bar-container">
+            <input type="range" id="progress-slider" class="progress-slider" min="0" max="100" value="0" step="0.1">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <div class="time-display">
+            <span id="current-time">0:00</span> / <span id="total-duration">5:01</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Playback Controls & Utility -->
+      <div class="controls-section">
+        <div class="playback-controls">
+          <button class="ctrl-btn btn-prev" id="btn-prev" title="Previous Song">
+            <i class="fa-solid fa-backward-step"></i>
+          </button>
+          
+          <button class="ctrl-btn btn-play-pause" id="btn-play-pause" title="Play/Pause">
+            <i class="fa-solid fa-play" id="play-icon"></i>
+          </button>
+          
+          <button class="ctrl-btn btn-next" id="btn-next" title="Next Song">
+            <i class="fa-solid fa-forward-step"></i>
+          </button>
+        </div>
+
+        <div class="utility-controls">
+          <button class="icon-btn" id="btn-volume" title="Volume Controls">
+            <i class="fa-solid fa-volume-high" id="vol-icon"></i>
+          </button>
+          <div class="volume-popover" id="volume-popover">
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8">
+          </div>
+          <button class="icon-btn" id="btn-playlist-toggle" title="Toggle Playlist">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Audio & Hidden YouTube IFrame Player -->
+  <audio id="audio-player" preload="metadata"></audio>
+  <div id="yt-player" style="position: fixed; top: -9999px; left: -9999px; width: 1px; height: 1px; opacity: 0; pointer-events: none;"></div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="app.js"></script>
+</body>
+</html>
