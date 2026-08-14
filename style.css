@@ -29,17 +29,6 @@ html, body {
   color: var(--text-main);
 }
 
-/* Canvas for Animated Rain Drops */
-#rain-canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 2;
-}
-
 /* Background Artwork Setup */
 .bg-image {
   position: absolute;
@@ -47,28 +36,19 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
+  background-image: url('Monsoon hits.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   z-index: 1;
-  transform: scale(1.02);
-  filter: brightness(0.85) contrast(1.05);
+  filter: brightness(1) contrast(1);
 }
 
-.bg-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    rgba(6, 24, 40, 0.3) 0%,
-    rgba(3, 12, 22, 0.65) 60%,
-    rgba(1, 6, 12, 0.88) 100%
-  );
-  z-index: 3;
-  pointer-events: none;
+/* Tablet & Mobile Background Artwork */
+@media (max-width: 992px) {
+  .bg-image {
+    background-image: url('Mobile.png');
+  }
 }
 
 /* Top Header Bar */
@@ -95,25 +75,25 @@ html, body {
 .header-center .online-badge {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
   background: rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 6px 14px;
+  padding: 5px 12px;
   border-radius: 20px;
-  font-size: 0.85rem;
+  font-size: 0.76rem;
   font-weight: 500;
   color: var(--text-main);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .pulse-dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   background-color: var(--accent-cyan);
   border-radius: 50%;
-  box-shadow: 0 0 12px var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan);
   animation: pulse 2s infinite;
 }
 
@@ -500,34 +480,35 @@ html, body {
 
 .volume-popover {
   position: absolute;
-  bottom: 46px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(255, 255, 255, 0.22);
+  bottom: calc(100% + 12px);
+  right: 48px;
+  background: rgba(255, 255, 255, 0.24);
   backdrop-filter: blur(50px) saturate(190%) contrast(105%);
   -webkit-backdrop-filter: blur(50px) saturate(190%) contrast(105%);
   border: 1px solid rgba(255, 255, 255, 0.38);
   padding: 14px 10px;
   border-radius: 30px;
-  display: none;
   box-shadow: 
-    0 16px 36px -6px rgba(0, 0, 0, 0.4),
+    0 18px 36px -6px rgba(0, 0, 0, 0.45),
     0 0 20px rgba(255, 255, 255, 0.15),
     inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.55),
     inset 0 -1.5px 1.5px 0 rgba(0, 0, 0, 0.15);
-  z-index: 200;
-}
-
-.volume-popover.active {
+  z-index: 999;
+  
+  /* Smooth Rise Up & Rise Down Animation */
+  opacity: 0;
+  transform: translateY(14px) scale(0.92);
+  pointer-events: none;
+  transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   align-items: center;
   justify-content: center;
-  animation: popoverFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes popoverFadeIn {
-  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+.volume-popover.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
 .volume-popover input[type="range"] {
@@ -540,22 +521,43 @@ html, body {
   cursor: pointer;
 }
 
-/* Playlist Drawer */
+/* Playlist Drawer - Apple Glass Theme */
 .playlist-drawer {
   position: fixed;
   top: 0;
-  right: -360px;
-  width: 340px;
+  right: -370px;
+  width: 350px;
   height: 100%;
-  background: rgba(20, 15, 12, 0.88);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(50px) saturate(190%) contrast(105%);
+  -webkit-backdrop-filter: blur(50px) saturate(190%) contrast(105%);
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
   z-index: 300;
   display: flex;
   flex-direction: column;
-  transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  transition: right 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 
+    -20px 0 50px rgba(0, 0, 0, 0.35),
+    inset 1.5px 0 1.5px 0 rgba(255, 255, 255, 0.45);
+  overflow: hidden;
+}
+
+.playlist-drawer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    180px circle at var(--drawer-mouse-x, -500px) var(--drawer-mouse-y, -500px),
+    rgba(255, 255, 255, 0.16) 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 80%
+  );
+  opacity: var(--drawer-mouse-opacity, 0);
+  transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .playlist-drawer.open {
@@ -567,7 +569,7 @@ html, body {
   justify-content: space-between;
   align-items: center;
   padding: 24px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .playlist-header h3 {
@@ -603,19 +605,20 @@ html, body {
   align-items: center;
   gap: 12px;
   padding: 10px 12px;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   margin-bottom: 4px;
 }
 
 .playlist-item:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.18);
 }
 
 .playlist-item.active {
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .playlist-thumb {
