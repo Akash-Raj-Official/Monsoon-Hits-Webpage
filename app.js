@@ -779,6 +779,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initRainCanvas();
 
+  // --- 8. Miniplayer Interactive Mouse Cursor Hover Effect ---
+  function initMiniplayerHoverEffect() {
+    const miniplayer = document.querySelector('.miniplayer');
+    if (!miniplayer) return;
+
+    miniplayer.addEventListener('mousemove', (e) => {
+      const rect = miniplayer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      miniplayer.style.setProperty('--mouse-x', `${x}px`);
+      miniplayer.style.setProperty('--mouse-y', `${y}px`);
+
+      // Gentle 3D perspective tilt relative to center
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const tiltX = ((y - centerY) / centerY) * -5;
+      const tiltY = ((x - centerX) / centerX) * 5;
+
+      miniplayer.style.transform = `perspective(1000px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateY(-4px) scale(1.01)`;
+    });
+
+    miniplayer.addEventListener('mouseleave', () => {
+      miniplayer.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0) scale(1)';
+      miniplayer.style.setProperty('--mouse-x', '50%');
+      miniplayer.style.setProperty('--mouse-y', '50%');
+    });
+  }
+
+  initMiniplayerHoverEffect();
+
   // Initialize
   loadTrack(0);
 });
