@@ -183,16 +183,17 @@ html, body {
   display: flex;
   align-items: center;
   gap: 18px;
-  background: rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 60px;
-  padding: 12px 24px 12px 12px;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(50px) saturate(190%) contrast(105%);
+  -webkit-backdrop-filter: blur(50px) saturate(190%) contrast(105%);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  border-radius: 9999px;
+  padding: 10px 24px 10px 10px;
   box-shadow: 
-    0 24px 48px -12px rgba(0, 0, 0, 0.4),
-    0 0 25px rgba(255, 255, 255, 0.1),
-    inset 0 1px 1px 0 rgba(255, 255, 255, 0.45);
+    0 20px 40px -10px rgba(0, 0, 0, 0.35),
+    0 0 20px rgba(255, 255, 255, 0.15),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1.5px 1.5px 0 rgba(0, 0, 0, 0.15);
   position: relative;
   overflow: hidden;
   /* Static position - no movement transform */
@@ -206,15 +207,15 @@ html, body {
   right: 0;
   bottom: 0;
   background: radial-gradient(
-    140px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
-    rgba(255, 255, 255, 0.28) 0%,
-    rgba(0, 242, 254, 0.14) 50%,
+    130px circle at var(--mouse-x, -500px) var(--mouse-y, -500px),
+    rgba(255, 255, 255, 0.35) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
     transparent 80%
   );
   opacity: var(--mouse-opacity, 0);
   transition: opacity 0.3s ease;
   pointer-events: none;
-  border-radius: 60px;
+  border-radius: 9999px;
 }
 
 /* Revolving Vinyl Disc */
