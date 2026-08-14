@@ -234,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
       videoId: "AfaO3wjUa0k",
       durationStr: "3:50",
       durationSec: 230,
-      cover: "Monsoon hits.png",
+      cover: "playlist.jpg",
       src: "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3",
       ytUrl: "https://music.youtube.com/watch?v=AfaO3wjUa0k&list=OLAK5uy_nrsol77KIGNjXoQrCTMw0tU1E2FjTeZ4I"
     },
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
       videoId: "bu0GaSacsaU",
       durationStr: "5:20",
       durationSec: 320,
-      cover: "Monsoon hits.png",
+      cover: "playlist.jpg",
       src: "https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=chill-abstract-intention-12099.mp3",
       ytUrl: "https://music.youtube.com/watch?v=bu0GaSacsaU&list=OLAK5uy_nrsol77KIGNjXoQrCTMw0tU1E2FjTeZ4I"
     },
@@ -256,7 +256,7 @@ document.addEventListener('DOMContentLoaded', () => {
       videoId: "aA_izMdyicY",
       durationStr: "5:15",
       durationSec: 315,
-      cover: "Monsoon hits.png",
+      cover: "playlist.jpg",
       src: "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=ambient-piano-amp-strings-10711.mp3",
       ytUrl: "https://music.youtube.com/watch?v=aA_izMdyicY&list=OLAK5uy_nrsol77KIGNjXoQrCTMw0tU1E2FjTeZ4I"
     }
@@ -274,10 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
   let synthInterval = null;
 
   // --- YouTube IFrame API Ready Callback ---
-  window.onYouTubeIframeAPIReady = function() {
+  window.onYouTubeIframeAPIReady = function () {
     ytPlayer = new YT.Player('yt-player', {
-      height: '1',
-      width: '1',
+      height: '360',
+      width: '640',
       videoId: playlist[currentTrackIndex].videoId,
       playerVars: {
         'autoplay': 0,
@@ -393,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function loadTrack(index) {
     currentTrackIndex = index;
     const track = playlist[currentTrackIndex];
-    
+
     simulatedCurrentTime = 0;
     songTitleEl.textContent = track.title;
     artistNameEl.textContent = track.artist;
@@ -401,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ytMusicLink) {
       ytMusicLink.href = track.ytUrl || MONSOON_YT_PLAYLIST;
     }
-    
+
     if (isYtReady && ytPlayer && ytPlayer.loadVideoById) {
       ytPlayer.loadVideoById(track.videoId);
       if (!isPlaying) {
@@ -415,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     progressFill.style.width = '0%';
     currentTimeEl.textContent = '0:00';
     totalDurationEl.textContent = track.durationStr || '5:01';
-    
+
     renderPlaylist();
   }
 
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
     stopPlaybackTimer();
     simulatedTimer = setInterval(() => {
       if (!isPlaying || isSeeking) return;
-      
+
       const track = playlist[currentTrackIndex];
       let totalSec = track.durationSec;
       let curSec = simulatedCurrentTime;
@@ -532,7 +532,7 @@ document.addEventListener('DOMContentLoaded', () => {
         noteGain.connect(synthGainNode);
         osc.start();
         osc.stop(synthAudioCtx.currentTime + 1.2);
-      } catch(e) {}
+      } catch (e) { }
     }, 600);
   }
 
@@ -542,7 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
       synthInterval = null;
     }
     if (synthGainNode) {
-      try { synthGainNode.disconnect(); } catch(e){}
+      try { synthGainNode.disconnect(); } catch (e) { }
       synthGainNode = null;
     }
   }
@@ -606,9 +606,9 @@ document.addEventListener('DOMContentLoaded', () => {
       ytPlayer.seekTo(targetSeconds, true);
     }
     if (audio.duration && !isNaN(audio.duration) && audio.duration > 0) {
-      try { audio.currentTime = targetSeconds; } catch(e) {}
+      try { audio.currentTime = targetSeconds; } catch (e) { }
     }
-    
+
     progressFill.style.width = `${sliderValue}%`;
     currentTimeEl.textContent = formatTime(targetSeconds);
   }
