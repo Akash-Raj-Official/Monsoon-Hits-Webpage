@@ -3,11 +3,11 @@
    ========================================================================== */
 
 :root {
-  --primary-glow: rgba(0, 242, 254, 0.3);
-  --glass-bg: rgba(10, 32, 54, 0.42);
-  --glass-border: rgba(255, 255, 255, 0.22);
+  --primary-glow: rgba(255, 255, 255, 0.3);
+  --apple-glass-bg: rgba(255, 255, 255, 0.14);
+  --apple-glass-border: rgba(255, 255, 255, 0.28);
   --text-main: #ffffff;
-  --text-muted: rgba(220, 240, 255, 0.75);
+  --text-muted: rgba(255, 255, 255, 0.72);
   --accent-cyan: #00f2fe;
   --accent-blue: #4facfe;
   --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -184,21 +184,22 @@ html, body {
   align-items: center;
   gap: 18px;
   background: radial-gradient(
-    140% 140% at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(0, 242, 254, 0.22) 0%,
-    rgba(12, 38, 62, 0.45) 55%,
-    rgba(5, 18, 32, 0.58) 100%
+    130% 130% at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.28) 0%,
+    rgba(255, 255, 255, 0.14) 45%,
+    rgba(200, 230, 255, 0.08) 100%
   );
-  backdrop-filter: blur(32px) saturate(160%);
-  -webkit-backdrop-filter: blur(32px) saturate(160%);
-  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(45px) saturate(210%);
+  -webkit-backdrop-filter: blur(45px) saturate(210%);
+  border: 1px solid var(--apple-glass-border);
   border-radius: 60px;
   padding: 12px 24px 12px 12px;
   box-shadow: 
-    0 20px 48px -10px rgba(0, 0, 0, 0.5),
-    0 0 25px rgba(0, 242, 254, 0.15),
-    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-  transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    0 25px 50px -12px rgba(0, 0, 0, 0.45),
+    0 0 30px rgba(255, 255, 255, 0.12),
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 1px 0 rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
   position: relative;
   overflow: hidden;
   transform-style: preserve-3d;
@@ -206,10 +207,11 @@ html, body {
 
 .miniplayer:hover {
   box-shadow: 
-    0 28px 60px -10px rgba(0, 0, 0, 0.65),
-    0 0 40px rgba(0, 242, 254, 0.3),
-    0 0 0 1px rgba(255, 255, 255, 0.35) inset;
-  border-color: rgba(0, 242, 254, 0.45);
+    0 32px 64px -12px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(0, 242, 254, 0.25),
+    inset 0 1px 2px 0 rgba(255, 255, 255, 0.6),
+    inset 0 -1px 2px 0 rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.45);
 }
 
 /* Revolving Vinyl Disc */
