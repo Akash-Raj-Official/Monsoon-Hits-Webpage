@@ -723,15 +723,86 @@ document.addEventListener('DOMContentLoaded', () => {
   closeDrawerBtn.addEventListener('click', closeDrawer);
   drawerOverlay.addEventListener('click', closeDrawer);
 
-  // Keyboard Navigation
+  // --- Keyboard Shortcuts (YouTube Music & Media Key Standards) ---
   document.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
+    const key = e.key.toLowerCase();
+    const code = e.code;
+
+    // 1. Play / Pause ('Space', 'k', MediaPlayPause)
+    if (code === 'Space' || key === 'k' || code === 'MediaPlayPause') {
       e.preventDefault();
-      btnPlayPause.click();
-    } else if (e.code === 'ArrowRight') {
-      if (audio.currentTime) audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
-    } else if (e.code === 'ArrowLeft') {
-      if (audio.currentTime) audio.currentTime = Math.max(0, audio.currentTime - 5);
+      if (isPlaying) {
+        pauseTrack();
+      } else {
+        playTrack();
+      }
+    }
+    // 2. Next Track ('n', Shift + 'n', MediaTrackNext)
+    else if (key === 'n' || code === 'MediaTrackNext') {
+      e.preventDefault();
+      nextTrack();
+    }
+    // 3. Previous Track ('p', Shift + 'p', MediaTrackPrevious)
+    else if (key === 'p' || code === 'MediaTrackPrevious') {
+      e.preventDefault();
+      prevTrack();
+    }
+    // 4. Seek Forward 5s ('ArrowRight' or 'l')
+    else if (code === 'ArrowRight' || key === 'l') {
+      e.preventDefault();
+      let cur = simulatedCurrentTime;
+      if (isYtReady && ytPlayer && ytPlayer.getCurrentTime) {
+        const ytCur = ytPlayer.getCurrentTime();
+        if (ytCur >= 0) cur = ytCur;
+      } else if (audio.currentTime && audio.currentTime > 0) {
+        cur = audio.currentTime;
+      }
+      const dur = playlist[currentTrackIndex].durationSec;
+      performSeek(Math.min(100, ((cur + 5) / dur) * 100));
+    }
+    // 5. Seek Backward 5s ('ArrowLeft' or 'j')
+    else if (code === 'ArrowLeft' || key === 'j') {
+      e.preventDefault();
+      let cur = simulatedCurrentTime;
+      if (isYtReady && ytPlayer && ytPlayer.getCurrentTime) {
+        const ytCur = ytPlayer.getCurrentTime();
+        if (ytCur >= 0) cur = ytCur;
+      } else if (audio.currentTime && audio.currentTime > 0) {
+        cur = audio.currentTime;
+      }
+      const dur = playlist[currentTrackIndex].durationSec;
+      performSeek(Math.max(0, ((cur - 5) / dur) * 100));
+    }
+    // 6. Volume Up ('ArrowUp')
+    else if (code === 'ArrowUp') {
+      e.preventDefault();
+      const currentVol = parseFloat(volumeSlider.value);
+      const newVol = Math.min(1, currentVol + 0.05);
+      volumeSlider.value = newVol;
+      updateVolume(newVol);
+    }
+    // 7. Volume Down ('ArrowDown')
+    else if (code === 'ArrowDown') {
+      e.preventDefault();
+      const currentVol = parseFloat(volumeSlider.value);
+      const newVol = Math.max(0, currentVol - 0.05);
+      volumeSlider.value = newVol;
+      updateVolume(newVol);
+    }
+    // 8. Mute / Unmute ('m')
+    else if (key === 'm') {
+      e.preventDefault();
+      if (parseFloat(volumeSlider.value) > 0) {
+        volumeSlider.dataset.prevVol = volumeSlider.value;
+        volumeSlider.value = 0;
+        updateVolume(0);
+      } else {
+        const prev = volumeSlider.dataset.prevVol || 0.8;
+        volumeSlider.value = prev;
+        updateVolume(prev);
+      }
     }
   });
 
