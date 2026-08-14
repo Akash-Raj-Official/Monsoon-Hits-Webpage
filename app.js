@@ -806,61 +806,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- 7. Interactive Monsoon Rain Canvas Engine ---
-  function initRainCanvas() {
-    const canvas = document.getElementById('rain-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
-
-    const dropCount = 110;
-    const drops = [];
-
-    for (let i = 0; i < dropCount; i++) {
-      drops.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        length: Math.random() * 18 + 10,
-        speed: Math.random() * 8 + 6,
-        opacity: Math.random() * 0.4 + 0.15,
-        width: Math.random() * 1.5 + 0.5
-      });
-    }
-
-    function drawRain() {
-      ctx.clearRect(0, 0, width, height);
-
-      for (let i = 0; i < dropCount; i++) {
-        const d = drops[i];
-        ctx.beginPath();
-        ctx.moveTo(d.x, d.y);
-        ctx.lineTo(d.x - 2, d.y + d.length);
-        ctx.strokeStyle = `rgba(180, 235, 255, ${d.opacity})`;
-        ctx.lineWidth = d.width;
-        ctx.stroke();
-
-        d.y += d.speed;
-        d.x -= 0.8;
-
-        if (d.y > height) {
-          d.y = -d.length;
-          d.x = Math.random() * (width + 100);
-        }
-      }
-      requestAnimationFrame(drawRain);
-    }
-    drawRain();
-  }
-
-  initRainCanvas();
-
   // --- 8. Miniplayer Static Position with Localized Mouse Cursor Spotlight ---
   function initMiniplayerHoverEffect() {
     const miniplayer = document.querySelector('.miniplayer');
@@ -882,6 +827,28 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   initMiniplayerHoverEffect();
+
+  // --- 9. Playlist Drawer Localized Mouse Cursor Spotlight ---
+  function initPlaylistDrawerHoverEffect() {
+    const drawer = document.querySelector('.playlist-drawer');
+    if (!drawer) return;
+
+    drawer.addEventListener('mousemove', (e) => {
+      const rect = drawer.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      drawer.style.setProperty('--drawer-mouse-x', `${x}px`);
+      drawer.style.setProperty('--drawer-mouse-y', `${y}px`);
+      drawer.style.setProperty('--drawer-mouse-opacity', '1');
+    });
+
+    drawer.addEventListener('mouseleave', () => {
+      drawer.style.setProperty('--drawer-mouse-opacity', '0');
+    });
+  }
+
+  initPlaylistDrawerHoverEffect();
 
   // Initialize
   loadTrack(0);
