@@ -471,10 +471,17 @@ html, body {
   padding-left: 10px;
 }
 
+.volume-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .icon-btn {
   background: transparent;
   border: none;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -493,25 +500,42 @@ html, body {
 
 .volume-popover {
   position: absolute;
-  bottom: 48px;
-  right: 28px;
-  background: rgba(30, 20, 18, 0.85);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 12px 10px;
-  border-radius: 20px;
+  bottom: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(50px) saturate(190%) contrast(105%);
+  -webkit-backdrop-filter: blur(50px) saturate(190%) contrast(105%);
+  border: 1px solid rgba(255, 255, 255, 0.38);
+  padding: 14px 10px;
+  border-radius: 30px;
   display: none;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  transform: rotate(-90deg);
-  transform-origin: right bottom;
+  box-shadow: 
+    0 16px 36px -6px rgba(0, 0, 0, 0.4),
+    0 0 20px rgba(255, 255, 255, 0.15),
+    inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -1.5px 1.5px 0 rgba(0, 0, 0, 0.15);
+  z-index: 200;
 }
 
 .volume-popover.active {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popoverFadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
 .volume-popover input[type="range"] {
-  width: 90px;
+  writing-mode: bt-lr;
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
+  width: 8px;
+  height: 100px;
   accent-color: #ffffff;
   cursor: pointer;
 }

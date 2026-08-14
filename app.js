@@ -674,9 +674,12 @@ document.addEventListener('DOMContentLoaded', () => {
   btnNext.addEventListener('click', nextTrack);
 
   // Volume Logic
-  volumeSlider.addEventListener('input', (e) => {
-    const vol = parseFloat(e.target.value);
+  function updateVolume(val) {
+    const vol = parseFloat(val);
     audio.volume = vol;
+    if (isYtReady && ytPlayer && ytPlayer.setVolume) {
+      ytPlayer.setVolume(Math.round(vol * 100));
+    }
     if (vol === 0) {
       volIcon.className = 'fa-solid fa-volume-xmark';
     } else if (vol < 0.5) {
@@ -684,6 +687,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       volIcon.className = 'fa-solid fa-volume-high';
     }
+  }
+
+  volumeSlider.addEventListener('input', (e) => {
+    updateVolume(e.target.value);
+  });
+
+  volumeSlider.addEventListener('change', (e) => {
+    updateVolume(e.target.value);
   });
 
   btnVolume.addEventListener('click', (e) => {
