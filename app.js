@@ -2,6 +2,15 @@
    DELUXE MUSIC PLAYER APPLICATION LOGIC
    ========================================================================== */
 
+// --- Global YouTube IFrame API Callback ---
+window.onYouTubeIframeAPIReady = function () {
+  if (window.initYTPlayer) {
+    window.initYTPlayer();
+  } else {
+    window.ytAPIReady = true;
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
   // --- Playlist Data ---
   const MONSOON_YT_PLAYLIST = "https://music.youtube.com/playlist?list=OLAK5uy_nrsol77KIGNjXoQrCTMw0tU1E2FjTeZ4I";
@@ -274,7 +283,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let synthInterval = null;
 
   // --- YouTube IFrame API Ready Callback ---
-  window.onYouTubeIframeAPIReady = function () {
+  window.initYTPlayer = function () {
+    if (ytPlayer) return;
     ytPlayer = new YT.Player('yt-player', {
       height: '360',
       width: '640',
@@ -293,6 +303,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   };
+
+  // If API loaded before DOMContentLoaded
+  if (window.ytAPIReady || (window.YT && window.YT.Player)) {
+    window.initYTPlayer();
+  }
 
   function onPlayerReady(event) {
     isYtReady = true;
@@ -451,6 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
       progressFill.style.width = `${progressPercent}%`;
       currentTimeEl.textContent = formatTime(curSec);
       totalDurationEl.textContent = formatTime(totalSec);
+      updateMediaSession();
     }, 1000);
   }
 
@@ -471,7 +487,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (isYtReady && ytPlayer && ytPlayer.playVideo) {
       ytPlayer.playVideo();
+      audio.pause(); // Ensure fallback audio doesn't play
+      enableBackgroundAudioKeepAlive(); // Wake lock keep-alive for YouTube
     } else {
+      disableBackgroundAudioKeepAlive(); // Disable wake lock for fallback
       const playPromise = audio.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
@@ -480,6 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
     }
+    updateMediaSession();
     renderPlaylist();
   }
 
@@ -495,6 +515,8 @@ document.addEventListener('DOMContentLoaded', () => {
     audio.pause();
     stopPlaybackTimer();
     stopSynthesizedAudio();
+    disableBackgroundAudioKeepAlive(); // Always disable keep-alive on pause
+    updateMediaSession();
     renderPlaylist();
   }
 
@@ -544,6 +566,117 @@ document.addEventListener('DOMContentLoaded', () => {
     if (synthGainNode) {
       try { synthGainNode.disconnect(); } catch (e) { }
       synthGainNode = null;
+    }
+  }
+
+  // --- Background Audio Keep-Alive via Web Audio API ---
+  let wakeLockAudio = null;
+
+  function enableBackgroundAudioKeepAlive() {
+    if (wakeLockAudio) return;
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      
+      // Create a 1-second silent buffer
+      const buffer = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+      const channelData = buffer.getChannelData(0);
+      for (let i = 0; i < channelData.length; i++) {
+        channelData[i] = 0; // Pure silence
+      }
+      
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      
+      // Connect to destination
+      source.connect(ctx.destination);
+      source.start();
+      
+      wakeLockAudio = { ctx, source };
+      console.log("Background audio keep-alive activated.");
+    } catch (e) {
+      console.warn("Could not start background audio keep-alive:", e);
+    }
+  }
+
+  function disableBackgroundAudioKeepAlive() {
+    if (wakeLockAudio) {
+      try {
+        wakeLockAudio.source.stop();
+        wakeLockAudio.source.disconnect();
+        wakeLockAudio.ctx.close();
+      } catch (e) {}
+      wakeLockAudio = null;
+      console.log("Background audio keep-alive deactivated.");
+    }
+  }
+
+  // --- Media Session API Integration ---
+  function updateMediaSession() {
+    if ('mediaSession' in navigator) {
+      const track = playlist[currentTrackIndex];
+      
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: track.title,
+        artist: track.artist,
+        album: "Monsoon Hits",
+        artwork: [
+          { src: track.cover, sizes: '512x512', type: 'image/jpeg' }
+        ]
+      });
+
+      navigator.mediaSession.playbackState = isPlaying ? "playing" : "paused";
+      
+      let cur = simulatedCurrentTime;
+      let dur = track.durationSec;
+      if (isYtReady && ytPlayer && ytPlayer.getCurrentTime) {
+        const ytCur = ytPlayer.getCurrentTime();
+        const ytDur = ytPlayer.getDuration();
+        if (ytDur > 0) dur = ytDur;
+        if (ytCur >= 0) cur = ytCur;
+      } else if (audio.duration && !isNaN(audio.duration) && audio.currentTime > 0) {
+        dur = audio.duration;
+        cur = audio.currentTime;
+      }
+      
+      try {
+        navigator.mediaSession.setPositionState({
+          duration: dur,
+          playbackRate: 1.0,
+          position: cur
+        });
+      } catch (e) {}
+    }
+  }
+
+  function initMediaSessionHandlers() {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.setActionHandler('play', () => {
+        playTrack();
+      });
+      navigator.mediaSession.setActionHandler('pause', () => {
+        pauseTrack();
+      });
+      navigator.mediaSession.setActionHandler('previoustrack', () => {
+        prevTrack();
+      });
+      navigator.mediaSession.setActionHandler('nexttrack', () => {
+        nextTrack();
+      });
+      navigator.mediaSession.setActionHandler('seekto', (details) => {
+        const track = playlist[currentTrackIndex];
+        let dur = track.durationSec;
+        if (isYtReady && ytPlayer && ytPlayer.getDuration) {
+          const ytDur = ytPlayer.getDuration();
+          if (ytDur > 0) dur = ytDur;
+        } else if (audio.duration && !isNaN(audio.duration)) {
+          dur = audio.duration;
+        }
+        
+        const targetPercent = (details.seekTime / dur) * 100;
+        performSeek(targetPercent);
+        updateMediaSession();
+      });
     }
   }
 
@@ -851,5 +984,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initPlaylistDrawerHoverEffect();
 
   // Initialize
+  initMediaSessionHandlers();
   loadTrack(0);
 });
